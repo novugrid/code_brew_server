@@ -1,0 +1,22 @@
+{
+  "name": "code_brew_server",
+  "version": "1.0.0",
+  "description": "this is a node projects that contains handy reusable tools for building other node projects",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/novugrid/code_brew_server.git"
+  },
+  "keywords": [
+    "code_brew"
+  ],
+  "author": "novugrid",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/novugrid/code_brew_server/issues"
+  },
+  "homepage": "https://github.com/novugrid/code_brew_server#readme"
+}
