@@ -4,7 +4,10 @@
   "description": "this is a node projects that contains handy reusable tools for building other node projects",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "jest --config jestconfig.json",
+    "build": "tsc",
+    "prepare" : "npm run build",
+    "prepublishOnly": "npm test"
   },
   "repository": {
     "type": "git",
@@ -18,5 +21,11 @@
   "bugs": {
     "url": "https://github.com/novugrid/code_brew_server/issues"
   },
-  "homepage": "https://github.com/novugrid/code_brew_server#readme"
+  "homepage": "https://github.com/novugrid/code_brew_server#readme",
+  "devDependencies": {
+    "@types/jest": "^25.2.1",
+    "jest": "^25.3.0",
+    "ts-jest": "^25.3.1",
+    "typescript": "^3.8.3"
+  }
 }
