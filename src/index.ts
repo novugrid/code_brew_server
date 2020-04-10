@@ -1,2 +1,6 @@
+import { ErrorBuilder } from './helpers/ErrorBuilder';
+import { paginate } from './helpers/Utility';
 
-export const Greeter = (name: string) => `Hello ${name}`;
+const Greeter = (name: string) => `Hello ${name}`;
+
+export {Greeter, ErrorBuilder, paginate}

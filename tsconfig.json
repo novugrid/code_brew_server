@@ -3,9 +3,17 @@
       "target": "es6",
       "module": "commonjs",
       "declaration": true,
-      "outDir": "./dist",
-      "strict": true
+      "outDir": "lib",
+      "strict": true,
+      "lib": ["es2017", "es7", "es6", "dom"],
+      "esModuleInterop": true,
+      "types": ["node"],
     },
-    "include": ["src"],
-    "exclude": ["node_modules", "**/__tests__/*"]
+    "include": ["src",
+    ],
+    "exclude": [
+      "node_modules", "**/__tests__/*",
+      "src/**/*.spec.ts",
+      "lib"
+    ]
   }

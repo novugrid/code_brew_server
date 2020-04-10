@@ -1,13 +1,15 @@
 {
   "name": "code_brew_server",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "this is a node projects that contains handy reusable tools for building other node projects",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "typescript": {
+    "definition": "index.d.ts"
+  },
   "scripts": {
     "test": "jest --config jestconfig.json",
     "build": "tsc",
-    "prepare" : "npm run build",
-    "prepublishOnly": "npm test"
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
@@ -23,9 +25,13 @@
   },
   "homepage": "https://github.com/novugrid/code_brew_server#readme",
   "devDependencies": {
+    "@types/express": "^4.17.6",
     "@types/jest": "^25.2.1",
+    "@types/node": "^13.11.1",
+    "express": "^4.17.1",
     "jest": "^25.3.0",
     "ts-jest": "^25.3.1",
     "typescript": "^3.8.3"
-  }
+  },
+  "dependencies": {}
 }
