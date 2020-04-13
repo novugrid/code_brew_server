@@ -1,11 +1,11 @@
 import { ErrorBuilder } from './helpers/ErrorBuilder';
 import { CBUtility, LoginType } from './helpers/Utility';
 import { ResponseHelper } from './helpers/ResponseHelper';
-import { onboardingRules } from './rules/OnboardingRules';
-import { OnBoardingModel } from './model/OnBoardingModel';
-import { SocialLoginInteface, OnBoardingResponse } from './interface/OnboardingInterface';
-import { OnBoardingHelper } from './helpers/OnBoardingHelper';
-import { OnBoardingRepository } from './repositories/OnboardingRepositoty';
+import { onboardingRules } from './onboarding/Rules';
+import { OnBoardingModel } from './onboarding/Model';
+import { SocialLoginInteface, OnBoardingResponse } from './onboarding/Interface';
+import { OnBoardingHelper } from './onboarding/OnBoarding';
+import { OnBoardingRepository } from './onboarding/Repositoty';
 
 const Greeter = (name: string) => `Hello ${name}`;
 

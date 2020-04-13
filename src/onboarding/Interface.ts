@@ -1,4 +1,4 @@
-import { OnBoardingModel } from '../model/OnBoardingModel';
+import { OnBoardingModel } from './Model';
 
 export interface SocialLoginInteface {
     user_name: string,

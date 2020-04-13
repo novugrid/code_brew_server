@@ -1,6 +1,6 @@
-import { OnBoardingModel } from '../model/OnBoardingModel';
-import { SocialLoginInteface, OnBoardingResponse } from '../interface/OnboardingInterface';
-import { OnBoardingRepository } from '../repositories/OnboardingRepositoty';
+import { OnBoardingModel } from './Model';
+import { SocialLoginInteface, OnBoardingResponse } from './Interface';
+import { OnBoardingRepository } from './Repositoty';
 import * as jwt from "jsonwebtoken";
 import { Model } from 'sequelize-typescript';
 

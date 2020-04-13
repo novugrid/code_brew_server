@@ -1,4 +1,4 @@
-import { OnBoardingModel } from '../model/OnBoardingModel';
+import { OnBoardingModel } from './Model';
 
 export abstract class OnBoardingRepository<T extends OnBoardingModel> {
 
