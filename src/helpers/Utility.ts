@@ -32,4 +32,14 @@ export class CBUtility {
         const limit = offset + pageSize;
         return {offset, limit};
     }
+
+    public static generateToken(length: number) {
+        let result           = "";
+        const characters       = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz0123456789";
+        const charactersLength = characters.length;
+        for ( let i = 0; i < length; i++ ) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
+    }
 }

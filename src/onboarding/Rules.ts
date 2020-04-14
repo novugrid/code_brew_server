@@ -19,8 +19,8 @@ export const onboardingRules = {
     forLogin: [
         check("password")
             .not().isEmpty().withMessage("Password cannot be empty"),
-        check("accountId")
-            .not().isEmpty().withMessage("The user account is not specified"),
+        check("email")
+            .not().isEmpty().withMessage("The user email is not specified").isEmail(),
     ],
 
     forChangePassword: [

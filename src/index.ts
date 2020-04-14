@@ -3,9 +3,10 @@ import { CBUtility, LoginType } from './helpers/Utility';
 import { ResponseHelper } from './helpers/ResponseHelper';
 import { onboardingRules } from './onboarding/Rules';
 import { OnBoardingModel } from './onboarding/Model';
-import { SocialLoginInteface, OnBoardingResponse } from './onboarding/Interface';
-import { OnBoardingHelper } from './onboarding/OnBoarding';
-import { OnBoardingRepository } from './onboarding/Repositoty';
+import { SocialLoginRequestParams, OnBoardingResponse, RegisterRequestParams,
+    LoginRequestParams, ResetPasswordRequestParams, ChangePasswordRequestParams } from './onboarding/Interface';
+import { CBOnBoarding } from './onboarding/OnBoarding';
+import { Emailer } from './helpers/Emailer';
 
 const Greeter = (name: string) => `Hello ${name}`;
 
@@ -17,8 +18,12 @@ export {
     onboardingRules,
     CBUtility,
     OnBoardingModel,
-    SocialLoginInteface,
+    SocialLoginRequestParams,
     OnBoardingResponse,
-    OnBoardingHelper,
-    OnBoardingRepository
+    CBOnBoarding,
+    LoginRequestParams,
+    Emailer,
+    ResetPasswordRequestParams,
+    ChangePasswordRequestParams,
+    RegisterRequestParams,
 }
