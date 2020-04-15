@@ -24,14 +24,14 @@ export const onboardingRules = {
     ],
 
     forChangePassword: [
-        check("user_id").not().isEmpty().withMessage("User id must be provided"),
+        check("id").not().isEmpty().withMessage("User id must be provided"),
         check("email").not().isEmpty().withMessage("User email must be provided"),
         check("old_password").not().isEmpty().withMessage("Current user password not provided"),
         check("new_password").not().isEmpty().withMessage("New user password not provided"),
     ],
 
     forChangePin: [
-        check("user_id").not().isEmpty().withMessage("User id must be provided"),
+        check("id").not().isEmpty().withMessage("User id must be provided"),
         check("email").not().isEmpty().withMessage("User email must be provided"),
         check("password").not().isEmpty().withMessage("User password must be provided"),
         check("old_pin").not().isEmpty().withMessage("User current pin must be provided"),
@@ -39,7 +39,14 @@ export const onboardingRules = {
     ],
 
     forResetPassword: [
-        check("email").not().isEmpty().withMessage("User email must be provided"),
+        check("email").not().isEmpty().withMessage("User email must be provided").isEmail(),
+        check("new_password").not().isEmpty().withMessage("User password must be provided"),
+        check("confirm_password").not().isEmpty().withMessage("User new password must be provided"),
+        check("otp").not().isEmpty().withMessage("OTP must be provided"),
+    ],
+
+    forInitResetPassword: [
+        check("email").not().isEmpty().withMessage("User email must be provided").isEmail(),
     ],
 
     forResetPin: [

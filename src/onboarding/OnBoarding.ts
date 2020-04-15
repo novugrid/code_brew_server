@@ -61,7 +61,7 @@ export class CBOnBoarding<T extends Model<T>> {
             const user = await this.model.findOne({
                 where: { email: data.email }
             })
-            if(user) {
+            if (user) {
                 response.message = "User with email already exist in the system, please try alternative login"
                 return response;
             }
@@ -133,7 +133,7 @@ export class CBOnBoarding<T extends Model<T>> {
         return jwt.sign({ id: model.id, email: model.email }, this.jwtSecret);
     }
 
-    public async initializePasswordReset<T extends Model<T>>(userEmail: string, 
+    public async initializePasswordReset<T extends Model<T>>(userEmail: string,
         otpModel: NonAbstractTypeOfModel<T>): Promise<OnBoardingResponse> {
         const token = CBUtility.generateToken(6);
         const user = await this.model.findOne({
@@ -144,9 +144,14 @@ export class CBOnBoarding<T extends Model<T>> {
             response.message = "user with email does not exist in the system";
             return response
         }
+        let mirroedUser = user as OnBoardingModel
+        if (mirroedUser.login_type != LoginType.EMAIL_N_PASSWORD) {
+            response.message = "you cannot reset password for this account.";
+            return response
+        }
 
         try {
-            await otpModel.create({ user_id: user.id, code: token });
+            await otpModel.create({ user_id: user.id, otp: token });
             const mailResponse = await new Emailer().setFromTo(userEmail) // "dammyololade2010@gmail.com, oladosulek@gmail.com")
                 .setSubject("Password Reset Request Token")
                 .setHtml("<h2>You requested a password reset</h2>" +
@@ -154,6 +159,7 @@ export class CBOnBoarding<T extends Model<T>> {
                     "<p><b>This token will expire in the next 2 Hours, " +
                     "Once elapse you will need to request another token</b></p>")
                 .send();
+            response.message = "an OTp has been sent to your mail"
             response.success = mailResponse
         } catch (e) {
             console.error('error sending otp', e)
@@ -161,10 +167,10 @@ export class CBOnBoarding<T extends Model<T>> {
         return response;
     }
 
-    public async resetPassword(requestBody: ResetPasswordRequestParams,
-        otpModel: NonAbstractTypeOfModel<T>): Promise<OnBoardingResponse> {
+    public async resetPassword<U extends Model<U>>(requestBody: ResetPasswordRequestParams,
+        otpModel: NonAbstractTypeOfModel<U>): Promise<OnBoardingResponse> {
         var user = await this.model.findOne({
-            where: {email: requestBody.email},
+            where: { email: requestBody.email },
         });
         var response = new OnBoardingResponse();
         if (user == null) {
@@ -187,10 +193,10 @@ export class CBOnBoarding<T extends Model<T>> {
             const sixMinutes = 7200000; // 2 hours // 360000;
             const diffMilliseconds = Date.now() - otpToken.created_on!.getTime();
             if (diffMilliseconds < sixMinutes) {
-                
+
                 if (requestBody.new_password === requestBody.confirm_password) {
                     let password = await bcrypt.hash(requestBody.new_password, this.saltRounds);
-                    await user.update({"password": password});
+                    await user.update({ "password": password });
                     response.success = true;
                     response.data = await user.reload()
                     response.message = "password reset successful"
@@ -210,26 +216,29 @@ export class CBOnBoarding<T extends Model<T>> {
     }
 
     public async changePassword(requestBody: ChangePasswordRequestParams): Promise<OnBoardingResponse> {
-
-        const user = await this.model.findOne({
-            where: {
-                id: Number(requestBody.id),
-                email: requestBody.email,
-            },
-        });
         var response = new OnBoardingResponse();
-        if (user == null) {
-            response.message = "user with email does not exist in the system";
-            return response
-        }
-        let mirroedUser = user as OnBoardingModel
-        const correctPassword = await bcrypt.compare(requestBody.old_password, mirroedUser.password!);
-        if (!correctPassword) {
-            response.message = "Wrond password, please try again later"
-            return response;
-        }
-        let newPassword = await bcrypt.hash(requestBody.new_password, this.saltRounds);
         try {
+            const user = await this.model.findOne({
+                where: {
+                    id: Number(requestBody.id),
+                    email: requestBody.email,
+                },
+            });
+            if (user == null) {
+                response.message = "user with email does not exist in the system";
+                return response
+            }
+            let mirroedUser = user as OnBoardingModel
+            if (mirroedUser.login_type != LoginType.EMAIL_N_PASSWORD) {
+                response.message = "you cannot change password for this account.";
+                return response
+            }
+            const correctPassword = await bcrypt.compare(requestBody.old_password, mirroedUser.password!);
+            if (!correctPassword) {
+                response.message = "Wrond password, please try again later"
+                return response;
+            }
+            let newPassword = await bcrypt.hash(requestBody.new_password, this.saltRounds);
             user.update({
                 password: newPassword
             });
