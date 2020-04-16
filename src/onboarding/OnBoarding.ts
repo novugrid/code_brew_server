@@ -9,7 +9,7 @@ import { Emailer } from '../helpers/Emailer';
 
 type NonAbstract<T> = { [P in keyof T]: T[P] }
 type Constructor<T> = (new () => T)
-type NonAbstractTypeOfModel<T> = Constructor<T> & NonAbstract<typeof Model>;
+export type NonAbstractTypeOfModel<T> = Constructor<T> & NonAbstract<typeof Model>;
 
 export class CBOnBoarding<T extends Model<T>> {
 
