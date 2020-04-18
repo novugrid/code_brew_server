@@ -1,14 +1,18 @@
+import { ValidationError } from "express-validator";
 
 export class ErrorBuilder {
     private errorCode: number; // Todo: This will be set by letting us know if it a validation error or diff error
-    private userMessage: string;
+    public userMessage: string;
+    public statusCode: number;
     private devMessage: string = "";
     private possibleSolution: string = "";
     private exceptionError: string = "";
+    private validationError: ValidationError[] = [];
 
-    constructor(userMessage: string, errorCode: number = 0) {
+    constructor(userMessage: string, statusCode: number = 400, errorCode: number = 0) {
         this.userMessage = userMessage;
         this.errorCode = errorCode;
+        this.statusCode = statusCode;
     }
 
     public UserMessage(message: string): ErrorBuilder {
@@ -32,5 +36,15 @@ export class ErrorBuilder {
         return this;
     }
 
+    /**
+     * Todo: make sure we cna type the ValidationErrors[]. so we should remove the any
+     * @param errors
+     * @constructor
+     */
+    public ValidationError(errors: ValidationError[]) {
+        this.statusCode = 422;
+        this.validationError = errors;
+        return this;
+    }
 
 }

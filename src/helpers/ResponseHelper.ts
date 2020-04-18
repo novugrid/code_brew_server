@@ -1,3 +1,4 @@
+import { ErrorBuilder } from './ErrorBuilder';
 import express = require("express");
 
 export class ResponseHelper {
@@ -6,9 +7,8 @@ export class ResponseHelper {
         return this.buildResponse(res, data, true, message, code);
     }
 
-    /// Todo(lekan): I think the data should be an object type instead of using the any
-    public error(res: express.Response, data: any, message = "failed", code = 400) {
-        return this.buildResponse(res, data, false, message, code);
+    public error(res: express.Response, data: ErrorBuilder) {
+        return this.buildResponse(res, data, false, data.userMessage, data.statusCode);
     }
 
     private buildResponse(res: express.Response, data: any, success: boolean, message: string, code: number) {
