@@ -14,18 +14,6 @@ export enum LoginType {
 
 export class CBUtility {
 
-    static validateRequest(req: express.Request, res: express.Response, next: express.NextFunction) {
-        console.log("validating the request");
-        const errors = validationResult(req);
-        console.log("error length", errors.array().length);
-        if (!errors.isEmpty()) {
-            const responseHelper = new ResponseHelper();
-            return responseHelper.error(res, new ErrorBuilder("failed validation error").ValidationError(errors.array()))
-        }
-        console.log("request validated. proceeding with the request");
-        next();
-    }
-
     static paginate(page: number, pageSize: number) {
         const offset = pageSize + page;
         const limit = offset + pageSize;

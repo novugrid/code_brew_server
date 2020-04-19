@@ -8,6 +8,7 @@ import { SocialLoginRequestParams, OnBoardingResponse, RegisterRequestParams,
 import { CBOnBoarding } from './onboarding/OnBoarding';
 import { Emailer } from './helpers/Emailer';
 import { CBRepository } from './CBRepository';
+import { CBMiddleware } from './CBMiddleware';
 
 const Greeter = (name: string) => `Hello ${name}`;
 
@@ -27,5 +28,6 @@ export {
     ResetPasswordRequestParams,
     ChangePasswordRequestParams,
     RegisterRequestParams,
-    CBRepository
+    CBRepository,
+    CBMiddleware,
 }
