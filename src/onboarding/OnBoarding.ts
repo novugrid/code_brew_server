@@ -82,7 +82,7 @@ export class CBOnBoarding<T extends Model<T>> {
      * 
      * @param params [LoginRequestParams]
      */
-    public async login(params: LoginRequestParams): Promise<OnBoardingResponse> {
+    public async login(params: LoginRequestParams, validateLoginType: boolean = true): Promise<OnBoardingResponse> {
         var response = new OnBoardingResponse();
         try {
             let record = await this.model.findOne({
@@ -95,7 +95,7 @@ export class CBOnBoarding<T extends Model<T>> {
                 return response;
             }
             let model = record as OnBoardingModel
-            if (model.login_type != LoginType.EMAIL_N_PASSWORD) {
+            if (validateLoginType && model.login_type != LoginType.EMAIL_N_PASSWORD) {
                 response.message = "please use a valid login type"
                 return response;
             }
