@@ -9,6 +9,10 @@ import { CBOnBoarding } from './onboarding/OnBoarding';
 import { Emailer } from './helpers/Emailer';
 import { CBRepository } from './CBRepository';
 import { CBMiddleware } from './CBMiddleware';
+import { CBMessage, MessageRequestParams } from './message/CBMessage';
+import { CBImage } from './image/CBImage';
+import { CBRules } from './CBRules';
+import { CBMessaageController } from './message/CBMessageController';
 
 const Greeter = (name: string) => `Hello ${name}`;
 
@@ -30,4 +34,9 @@ export {
     RegisterRequestParams,
     CBRepository,
     CBMiddleware,
+    CBMessage,
+    CBImage,
+    CBRules,
+    MessageRequestParams,
+    CBMessaageController
 }
