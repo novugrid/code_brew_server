@@ -11,10 +11,10 @@ export class CBImage extends Model<CBImage> {
     url!: string
 
     @Column
-    owner_id!: number
+    model_id!: number
 
     @Column
-    owner_type!: string
+    model_name!: string
 
     @CreatedAt
     @Column

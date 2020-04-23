@@ -4,32 +4,54 @@ import { MessageRequestParams, MessageType, CBMessage } from './CBMessage';
 import { CBImage } from '../image/CBImage';
 import { Sequelize, Model } from 'sequelize-typescript';
 import { NonAbstractTypeOfModel } from '../onboarding/OnBoarding';
+import { Includeable } from 'sequelize/types';
+import { NotificationDirector } from './NotificationDirector';
+import { CBRepository } from '../CBRepository';
 
 const responseHelper = new ResponseHelper() 
 
-export class CBMessaageController<T extends Model<T>> {
-
-    model: NonAbstractTypeOfModel<T>
-    imageModel: NonAbstractTypeOfModel<T>
-
-    constructor(model: NonAbstractTypeOfModel<T>, imageModel: NonAbstractTypeOfModel<T>) {
-        this.model = model
-        this.imageModel = imageModel
-    }
+export class CBMessaageController{
 
     public async getMessages(req: express.Request, res: express.Response) {
-
+        try {
+            const messages = await CBMessage.findAll({
+                include: [this.getIncludeWhereClause()]
+            })
+            return responseHelper.success(res, {messages: messages});
+        } catch (err) {
+            console.error("error fetching all the messages in the system ", err)
+        }
     }
 
     public async createMessage(req: express.Request, res: express.Response) {
         try{
             const payload = req.body as MessageRequestParams
-            const message = await this.model.create(payload)
+            let message = await CBMessage.create(payload)
             if(payload.message_type == MessageType.Single && payload.push_token) {
-                //todo send notification device
+                new NotificationDirector()
+                    .setData({"message": payload.message})
+                    .setToken(payload.push_token)
+                    .setNotification(payload.message_title, payload.message)
+                    .send()
             } else if(payload.topic_id) {
-                // send the notification to topic
+                new NotificationDirector()
+                    .setTopic(payload.topic_id)
+                    .setData({"message": payload.message})
+                    .setNotification(payload.message_title, payload.message)
+                    .sendToTopic()
             }
+            if(payload.images.length > 0){
+                for (const url of payload.images) {
+                    await CBImage.create({
+                        url: url,
+                        owner_id: message.id,
+                        owner_type: CBMessage.tableName
+                    })
+                }
+            }
+            message = await message.reload({
+                include: [this.getIncludeWhereClause()]
+            })
             return responseHelper.success(res, {"message": message}, 
                 "message sent succesfully");
         } catch(error) {
@@ -39,11 +61,12 @@ export class CBMessaageController<T extends Model<T>> {
 
     public async getUserMessages(req: express.Request, res: express.Response) {
         try {
-            let messages = await this.model.findAll({
+            let messages = await CBMessage.findAll({
                 where: Sequelize.or(
                     {owner_id: req.params.id},
                     {message_type: MessageType.All}
-                )
+                ),
+                include: [this.getIncludeWhereClause()]
             });
             return responseHelper.success(res, {"messages": messages});
         } catch(error) {
@@ -51,4 +74,12 @@ export class CBMessaageController<T extends Model<T>> {
         }
     }
 
+    private getIncludeWhereClause(): Includeable {
+        return {
+            model: CBImage, 
+            where: {owner_type: CBMessage.tableName},
+            required: false, 
+            separate: true
+        }
+    }
 }

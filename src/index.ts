@@ -13,6 +13,7 @@ import { CBMessage, MessageRequestParams } from './message/CBMessage';
 import { CBImage } from './image/CBImage';
 import { CBRules } from './CBRules';
 import { CBMessaageController } from './message/CBMessageController';
+import { CBFavourite } from './favourite/CBFavourite';
 
 const Greeter = (name: string) => `Hello ${name}`;
 
@@ -38,5 +39,6 @@ export {
     CBImage,
     CBRules,
     MessageRequestParams,
-    CBMessaageController
+    CBMessaageController,
+    CBFavourite,
 }

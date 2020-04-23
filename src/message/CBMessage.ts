@@ -1,8 +1,10 @@
 import { Model, Table, Column, DataType, Default, CreatedAt, UpdatedAt, DeletedAt, HasMany } from "sequelize-typescript";
 import { CBImage } from '../image/CBImage';
 
-
-export class CBMessage<T> extends Model<T> {
+@Table({
+    tableName: "messages"
+})
+export class CBMessage extends Model {
 
     @Column(DataType.TEXT)
     message!: string
@@ -15,7 +17,7 @@ export class CBMessage<T> extends Model<T> {
     message_title!: string
 
     @Column
-    owner_id!: number
+    user_id!: number
 
     @CreatedAt
     @Column
@@ -28,6 +30,9 @@ export class CBMessage<T> extends Model<T> {
     @DeletedAt
     @Column
     public deleted_at!: Date;
+
+    @HasMany(() => CBImage, "model_id")
+    images!: CBImage[]
 }
 
 export enum MessageType {
@@ -39,7 +44,7 @@ export interface MessageRequestParams {
     images: string[]
     message: string
     message_type: string
-    owner_id: number,
+    user_id: number,
     push_token: string,
     topic_id: string,
     message_title: string
