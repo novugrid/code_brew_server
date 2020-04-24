@@ -31,7 +31,7 @@ export class CBMessage extends Model {
     @Column
     public deleted_at!: Date;
 
-    @HasMany(() => CBImage, "model_id")
+    @HasMany(() => CBImage, "message_id")
     images!: CBImage[]
 }
 

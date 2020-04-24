@@ -9,13 +9,18 @@ import { NotificationDirector } from './NotificationDirector';
 import { CBRepository } from '../CBRepository';
 
 const responseHelper = new ResponseHelper() 
+const imageQuery = {
+    model: CBImage, 
+    required: false, 
+    separate: true
+};
 
 export class CBMessaageController{
 
     public async getMessages(req: express.Request, res: express.Response) {
         try {
             const messages = await CBMessage.findAll({
-                include: [this.getIncludeWhereClause()]
+                include: [imageQuery]
             })
             return responseHelper.success(res, {messages: messages});
         } catch (err) {
@@ -44,13 +49,12 @@ export class CBMessaageController{
                 for (const url of payload.images) {
                     await CBImage.create({
                         url: url,
-                        owner_id: message.id,
-                        owner_type: CBMessage.tableName
+                        message_id: message.id,
                     })
                 }
             }
             message = await message.reload({
-                include: [this.getIncludeWhereClause()]
+                include: [imageQuery]
             })
             return responseHelper.success(res, {"message": message}, 
                 "message sent succesfully");
@@ -66,20 +70,11 @@ export class CBMessaageController{
                     {owner_id: req.params.id},
                     {message_type: MessageType.All}
                 ),
-                include: [this.getIncludeWhereClause()]
+                include: [imageQuery]
             });
             return responseHelper.success(res, {"messages": messages});
         } catch(error) {
             console.error("error while fetching user's messages: ", error)
-        }
-    }
-
-    private getIncludeWhereClause(): Includeable {
-        return {
-            model: CBImage, 
-            where: {owner_type: CBMessage.tableName},
-            required: false, 
-            separate: true
         }
     }
 }
