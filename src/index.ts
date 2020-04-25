@@ -14,6 +14,7 @@ import { CBImage } from './image/CBImage';
 import { CBRules } from './CBRules';
 import { CBMessaageController } from './message/CBMessageController';
 import { CBFavourite } from './favourite/CBFavourite';
+import { CBFavouriteController } from './favourite/CBFavouriteController';
 
 const Greeter = (name: string) => `Hello ${name}`;
 
@@ -41,4 +42,5 @@ export {
     MessageRequestParams,
     CBMessaageController,
     CBFavourite,
+    CBFavouriteController
 }
