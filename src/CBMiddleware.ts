@@ -24,23 +24,28 @@ export class CBMiddleware {
     }
 
     static async validateToken(req: express.Request, res: express.Response, next: express.NextFunction) {
-        const token = this.getTokenFromHeaders(req.headers) || req.query.token || req.body.token || "";
-        const isValid = await this.verifyToken(token)
-        if(!isValid) {
-            return new ResponseHelper().error(res, new ErrorBuilder("your session has expired, please login again", 401))
+        const token = CBMiddleware.getTokenFromHeaders(req.headers) || req.query.token || req.body.token || "";
+        const isValid = await CBMiddleware.verifyToken(token)
+        if (!isValid) {
+            return new ResponseHelper().error(res, new ErrorBuilder("Invalid authorisation token", 401))
         }
         next();
     }
 
-    static getTokenFromHeaders(headers: IncomingHttpHeaders) {
-        const header = headers.authorization as string;
-        if (!header) { return header; }
-        return header.split(" ")[1];
+    private static getTokenFromHeaders(headers: IncomingHttpHeaders) {
+        try {
+            const header = headers.authorization as string;
+            if (!header) { return header; }
+            return header.split(" ")[1];
+        }catch(err) {
+            console.log("unable to get token: ", err)
+            return ""
+        }
     }
 
-    static async verifyToken(token: string) {
+    private static async verifyToken(token: string) {
         return new Promise((resolve, reject) => {
-            jwt.verify(token, this.jwtSecret,  async (err, decoded) => {
+            jwt.verify(token, CBMiddleware.jwtSecret, async (err, decoded) => {
                 if (err) {
                     resolve(false);
                     return;
