@@ -5,6 +5,7 @@ import { ErrorBuilder } from './helpers/ErrorBuilder';
 import { IncomingHttpHeaders } from 'http';
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
+import { OnBoardingModel } from './onboarding/Model';
 
 
 export class CBMiddleware {
@@ -54,5 +55,19 @@ export class CBMiddleware {
                 return;
             });
         }) as Promise<boolean>;
+    }
+
+    public static async getTokenData(req: express.Request) {
+        try {
+            const token = CBMiddleware.getTokenFromHeaders(req.headers) || req.query.token || req.body.token || "";
+            return new Promise((resolve, reject) => {
+                jwt.verify(token, CBMiddleware.jwtSecret, async (err: any, decoded: any) => {
+                    resolve(decoded);
+                    return;
+                });
+            }) as Promise<OnBoardingModel>;
+        }catch (err) {
+            console.log("error while getting token data:", err)
+        }
     }
 }

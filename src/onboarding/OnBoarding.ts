@@ -115,22 +115,8 @@ export class CBOnBoarding<T extends Model<T>> {
         return response;
     }
 
-    public verifyToken(token: string) {
-        return new Promise((resolve, reject) => {
-            jwt.verify(token, this.jwtSecret, async (err: any, decoded: any) => {
-                if (err) {
-                    resolve({ success: false, id: 0 });
-                    return;
-                }
-                const id = (decoded as any).id;
-                resolve({ success: true, id: id });
-                return;
-            });
-        }) as Promise<{ success: boolean, id: number }>;
-    }
-
     public generateToken(model: OnBoardingModel): string {
-        return jwt.sign({ id: model.id, email: model.email }, this.jwtSecret);
+        return jwt.sign(model, this.jwtSecret);
     }
 
     public async initializePasswordReset<T extends Model<T>>(userEmail: string,
