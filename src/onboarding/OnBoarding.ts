@@ -116,7 +116,7 @@ export class CBOnBoarding<T extends Model<T>> {
     }
 
     public generateToken(model: OnBoardingModel): string {
-        return jwt.sign(model, this.jwtSecret);
+        return jwt.sign({id: model.id, email: model.email, login_type: model.login_type}, this.jwtSecret);
     }
 
     public async initializePasswordReset<T extends Model<T>>(userEmail: string,
