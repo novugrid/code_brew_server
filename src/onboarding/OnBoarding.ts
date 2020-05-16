@@ -62,7 +62,7 @@ export class CBOnBoarding<T extends Model<T>> {
                 where: { email: data.email }
             })
             if (user) {
-                response.message = "User with email already exist in the system, please try alternative login"
+                response.message = "User with email already exist , please try alternative login"
                 return response;
             }
             if (data.password) {
@@ -91,7 +91,7 @@ export class CBOnBoarding<T extends Model<T>> {
                 }
             })
             if (!record) {
-                response.message = "user with email does not exist in the system";
+                response.message = "user with email does not exist ";
                 return response;
             }
             let model = record as OnBoardingModel
@@ -127,7 +127,7 @@ export class CBOnBoarding<T extends Model<T>> {
         });
         var response = new OnBoardingResponse();
         if (user == null) {
-            response.message = "user with email does not exist in the system";
+            response.message = "user with email does not exist ";
             return response
         }
         let mirroedUser = user as OnBoardingModel
@@ -160,7 +160,7 @@ export class CBOnBoarding<T extends Model<T>> {
         });
         var response = new OnBoardingResponse();
         if (user == null) {
-            response.message = "user with email does not exist in the system";
+            response.message = "user with email does not exist ";
             return response
         }
         try {
@@ -211,7 +211,7 @@ export class CBOnBoarding<T extends Model<T>> {
                 },
             });
             if (user == null) {
-                response.message = "user with email does not exist in the system";
+                response.message = "user with email does not exist ";
                 return response
             }
             let mirroedUser = user as OnBoardingModel
