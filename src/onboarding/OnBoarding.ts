@@ -32,7 +32,8 @@ export class CBOnBoarding<T extends Model<T>> {
             })
             const existingUser = record as OnBoardingModel
             if (existingUser && existingUser.login_type != params.login_type) {
-                response.message = "please use a valid login type"
+                //Todo we need to review this for other social login types
+                response.message = "This record currently exist, kindly use Email and password to login"
                 return response;
             } else if (existingUser) {
                 data = existingUser
@@ -62,7 +63,7 @@ export class CBOnBoarding<T extends Model<T>> {
                 where: { email: data.email }
             })
             if (user) {
-                response.message = "User with email already exist , please try alternative login"
+                response.message = "User with email already exist, please try alternative login"
                 return response;
             }
             if (data.password) {
@@ -91,12 +92,12 @@ export class CBOnBoarding<T extends Model<T>> {
                 }
             })
             if (!record) {
-                response.message = "user with email does not exist ";
+                response.message = "User with email does not exist";
                 return response;
             }
             let model = record as OnBoardingModel
             if (validateLoginType && model.login_type != LoginType.EMAIL_N_PASSWORD) {
-                response.message = "please use a valid login type"
+                response.message = "This record currently exist, kindly use your Google account to login"
                 return response;
             }
             const correctPassword = await bcrypt.compare(params.password, model.password!);
