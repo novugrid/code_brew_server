@@ -67,7 +67,7 @@ export class CBMessaageController{
         try {
             let messages = await CBMessage.findAll({
                 where: Sequelize.or(
-                    {owner_id: req.params.id},
+                    {userr_id: req.params.id},
                     {message_type: MessageType.All}
                 ),
                 include: [imageQuery]

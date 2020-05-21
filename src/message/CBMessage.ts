@@ -13,6 +13,7 @@ export class CBMessage extends Model {
     @Column
     message_type!: string
 
+    @Default("")
     @Column
     message_title!: string
 
