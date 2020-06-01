@@ -121,7 +121,7 @@ export class CBOnBoarding<T extends Model<T>> {
     }
 
     public async initializePasswordReset<T extends Model<T>>(userEmail: string,
-        otpModel: NonAbstractTypeOfModel<T>): Promise<OnBoardingResponse> {
+        otpModel: NonAbstractTypeOfModel<T>, validateLoginType = true): Promise<OnBoardingResponse> {
         const token = CBUtility.generateToken(6);
         const user = await this.model.findOne({
             where: { email: userEmail },
@@ -132,8 +132,8 @@ export class CBOnBoarding<T extends Model<T>> {
             return response
         }
         let mirroedUser = user as OnBoardingModel
-        if (mirroedUser.login_type != LoginType.EMAIL_N_PASSWORD) {
-            response.message = "you cannot reset password for this account.";
+        if (validateLoginType && mirroedUser.login_type != LoginType.EMAIL_N_PASSWORD) {
+            response.message = "You cannot reset password for this account.";
             return response
         }
 
