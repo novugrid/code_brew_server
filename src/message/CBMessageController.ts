@@ -7,6 +7,7 @@ import { NonAbstractTypeOfModel } from '../onboarding/OnBoarding';
 import { Includeable } from 'sequelize/types';
 import { NotificationDirector } from './NotificationDirector';
 import { CBRepository } from '../CBRepository';
+import { ErrorBuilder } from '../helpers/ErrorBuilder';
 
 const responseHelper = new ResponseHelper() 
 const imageQuery = {
@@ -32,6 +33,78 @@ export class CBMessaageController{
         try{
             const payload = req.body as MessageRequestParams
             let message = await CBMessage.create(payload)
+            if(payload.images.length > 0){
+                for (const url of payload.images) {
+                    await CBImage.create({
+                        url: url,
+                        message_id: message.id,
+                    })
+                }
+            }
+            message = await message.reload({
+                include: [imageQuery]
+            })
+            CBMessaageController.sendNotification(payload)
+            return responseHelper.success(res, {"message": message}, 
+                "message sent succesfully");
+        } catch(error) {
+            console.error("error while adding a new message: ", error)
+        }
+    }
+
+    public async updateMessage(req: express.Request, res: express.Response) {
+        try{
+            var message = await CBMessage.findByPk(req.params.id)
+            if(!message) {
+                return responseHelper.error(res, new ErrorBuilder("record does not exist in the system"))
+            }
+            const payload = req.body as MessageRequestParams
+            await message.update(payload)
+            await CBImage.destroy({
+                where: {
+                    message_id: message.id
+                }
+            })
+            if(payload.images.length > 0){
+                for (const url of payload.images) {
+                    await CBImage.create({
+                        url: url,
+                        message_id: message.id,
+                    })
+                }
+            }
+            message = await message.reload({
+                include: [imageQuery]
+            })
+            CBMessaageController.sendNotification(payload)
+            return responseHelper.success(res, {"message": message}, 
+                "message updated succesfully");
+        } catch(error) {
+            console.error("error while updating message: ", error)
+        }
+    }
+
+    public async deleteMessage(req: express.Request, res: express.Response) {
+        try {
+            var message = await CBMessage.findByPk(req.params.id)
+            if(!message) {
+                return responseHelper.error(res, new ErrorBuilder("record does not exist in the system"))
+            }
+            await message.destroy()
+            await CBImage.destroy({
+                where: {
+                    message_id: message.id
+                }
+            })
+            return responseHelper.success(res, {}, 
+                "message deleted succesfully");
+        } catch(error) {
+            console.error("error while deleting message: ", error)
+        }
+    }
+
+    static async sendNotification(payload: MessageRequestParams) {
+        try {
             if(payload.message_type == MessageType.Single && payload.push_token) {
                 new NotificationDirector()
                     .setData({"message": payload.message})
@@ -45,21 +118,8 @@ export class CBMessaageController{
                     .setNotification(payload.message_title, payload.message)
                     .sendToTopic()
             }
-            if(payload.images.length > 0){
-                for (const url of payload.images) {
-                    await CBImage.create({
-                        url: url,
-                        message_id: message.id,
-                    })
-                }
-            }
-            message = await message.reload({
-                include: [imageQuery]
-            })
-            return responseHelper.success(res, {"message": message}, 
-                "message sent succesfully");
         } catch(error) {
-            console.error("error while adding a new message: ", error)
+            console.error("Error sending notification ", error)
         }
     }
 
