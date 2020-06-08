@@ -1,7 +1,7 @@
 import { Model,  } from 'sequelize-typescript';
 import { NonAbstractTypeOfModel } from './onboarding/OnBoarding';
 import express from 'express';
-import { WhereOptions, Includeable } from 'sequelize/types';
+import { WhereOptions, Includeable, OrderItem } from 'sequelize/types';
 
 export class CBRepository<T extends Model<T>> {
 
@@ -22,7 +22,7 @@ export class CBRepository<T extends Model<T>> {
      * @param order : sorting order 
      */
     public async paginate(req: express.Request, where: WhereOptions, 
-        includeAble: Includeable[], order: []) {
+        includeAble: Includeable[], order: OrderItem[]) {
         var res = new PaginationResponse()
         let page = 1;
         let pageSize = 20;
