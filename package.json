@@ -1,5 +1,5 @@
 {
-  "name": "code_brew_server",
+  "name": "codebrew-server",
   "version": "1.01.05",
   "description": "this is a node projects that contains handy reusable tools for building other node projects",
   "main": "lib/index.js",
@@ -16,7 +16,9 @@
     "url": "git+https://github.com/novugrid/code_brew_server.git"
   },
   "keywords": [
-    "code_brew"
+    "codebrew",
+    "code_brew",
+    "codebrew_server"
   ],
   "author": "novugrid",
   "license": "ISC",
