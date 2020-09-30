@@ -131,7 +131,8 @@ export class CBMessaageController{
                     {user_id: req.params.id},
                     {message_type: MessageType.All}
                 ),
-                include: [imageQuery]
+                include: [imageQuery],
+                order: [["created_at", "DESC"]]
             });
             return responseHelper.success(res, {"messages": messages});
         } catch(error) {
