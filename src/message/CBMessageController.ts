@@ -21,8 +21,9 @@ export class CBMessaageController{
     public async getMessages(req: express.Request, res: express.Response) {
         try {
             const messages = await CBMessage.findAll({
-                include: [imageQuery]
-            })
+                include: [imageQuery],
+                order: [["created_at", "DESC"]]
+            });
             return responseHelper.success(res, {messages: messages});
         } catch (err) {
             console.error("error fetching all the messages in the system ", err)
