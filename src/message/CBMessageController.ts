@@ -1,40 +1,51 @@
-import { ResponseHelper } from '../helpers/ResponseHelper';
+import {ResponseHelper} from "../helpers/ResponseHelper";
 import express from 'express';
-import { MessageRequestParams, MessageType, CBMessage } from './CBMessage';
+import { CBMessage, MessageRequestParams, MessageType } from './CBMessage';
 import { CBImage } from '../image/CBImage';
-import { Sequelize, Model } from 'sequelize-typescript';
-import { NonAbstractTypeOfModel } from '../onboarding/OnBoarding';
-import { Includeable } from 'sequelize/types';
+import { Sequelize } from 'sequelize-typescript';
 import { NotificationDirector } from './NotificationDirector';
-import { CBRepository } from '../CBRepository';
 import { ErrorBuilder } from '../helpers/ErrorBuilder';
+import { Op} from "sequelize" // /types/lib/operators";
 
-const responseHelper = new ResponseHelper() 
+const responseHelper = new ResponseHelper();
 const imageQuery = {
-    model: CBImage, 
-    required: false, 
+    model: CBImage,
+    required: false,
     separate: true
 };
 
-export class CBMessaageController{
+export class CBMessaageController {
 
-    public async getMessages(req: express.Request, res: express.Response) {
+    public async getMessage(id: number): Promise<CBMessage | null> {
+        return CBMessage.findByPk(id);
+    }
+
+    public async getMessages(date?: Date): Promise<CBMessage[]> {
+        // That bridge
         try {
+            let where = {};
+            if (date != null) {
+                where = {...where, "created_at": {[Op.gt]: date}}
+            }
+
             const messages = await CBMessage.findAll({
+                where: where,
                 include: [imageQuery],
                 order: [["created_at", "DESC"]]
             });
-            return responseHelper.success(res, {messages: messages});
+            return messages;
+            // return responseHelper.success(res, {messages: messages});
         } catch (err) {
             console.error("error fetching all the messages in the system ", err)
+            return Promise.reject(err);
         }
     }
 
     public async createMessage(req: express.Request, res: express.Response) {
-        try{
-            const payload = req.body as MessageRequestParams
-            let message = await CBMessage.create(payload)
-            if(payload.images.length > 0){
+        try {
+            const payload = req.body as MessageRequestParams;
+            let message = await CBMessage.create(payload);
+            if (payload.images.length > 0) {
                 for (const url of payload.images) {
                     await CBImage.create({
                         url: url,
@@ -44,29 +55,29 @@ export class CBMessaageController{
             }
             message = await message.reload({
                 include: [imageQuery]
-            })
-            CBMessaageController.sendNotification(payload)
-            return responseHelper.success(res, {"message": message}, 
+            });
+            CBMessaageController.sendNotification(payload);
+            return responseHelper.success(res, {"message": message},
                 "message sent succesfully");
-        } catch(error) {
+        } catch (error) {
             console.error("error while adding a new message: ", error)
         }
     }
 
     public async updateMessage(req: express.Request, res: express.Response) {
-        try{
-            var message = await CBMessage.findByPk(req.params.id)
-            if(!message) {
+        try {
+            var message = await CBMessage.findByPk(req.params.id);
+            if (!message) {
                 return responseHelper.error(res, new ErrorBuilder("record does not exist in the system"))
             }
-            const payload = req.body as MessageRequestParams
-            await message.update(payload)
+            const payload = req.body as MessageRequestParams;
+            await message.update(payload);
             await CBImage.destroy({
                 where: {
                     message_id: message.id
                 }
-            })
-            if(payload.images.length > 0){
+            });
+            if (payload.images.length > 0) {
                 for (const url of payload.images) {
                     await CBImage.create({
                         url: url,
@@ -76,50 +87,50 @@ export class CBMessaageController{
             }
             message = await message.reload({
                 include: [imageQuery]
-            })
-            CBMessaageController.sendNotification(payload)
-            return responseHelper.success(res, {"message": message}, 
+            });
+            CBMessaageController.sendNotification(payload);
+            return responseHelper.success(res, {"message": message},
                 "message updated succesfully");
-        } catch(error) {
+        } catch (error) {
             console.error("error while updating message: ", error)
         }
     }
 
     public async deleteMessage(req: express.Request, res: express.Response) {
         try {
-            var message = await CBMessage.findByPk(req.params.id)
-            if(!message) {
+            var message = await CBMessage.findByPk(req.params.id);
+            if (!message) {
                 return responseHelper.error(res, new ErrorBuilder("record does not exist in the system"))
             }
-            await message.destroy()
+            await message.destroy();
             await CBImage.destroy({
                 where: {
                     message_id: message.id
                 }
-            })
-            return responseHelper.success(res, {}, 
+            });
+            return responseHelper.success(res, {},
                 "message deleted succesfully");
-        } catch(error) {
+        } catch (error) {
             console.error("error while deleting message: ", error)
         }
     }
 
     static async sendNotification(payload: MessageRequestParams) {
         try {
-            if(payload.message_type == MessageType.Single && payload.push_token) {
+            if (payload.message_type == MessageType.Single && payload.push_token) {
                 new NotificationDirector()
                     .setData({"message": payload.message})
                     .setToken(payload.push_token)
                     .setNotification(payload.message_title, payload.message)
                     .send()
-            } else if(payload.topic_id) {
+            } else if (payload.topic_id) {
                 new NotificationDirector()
                     .setTopic(payload.topic_id)
                     .setData({"message": payload.message})
                     .setNotification(payload.message_title, payload.message)
                     .sendToTopic()
             }
-        } catch(error) {
+        } catch (error) {
             console.error("Error sending notification ", error)
         }
     }
@@ -135,7 +146,7 @@ export class CBMessaageController{
                 order: [["created_at", "DESC"]]
             });
             return responseHelper.success(res, {"messages": messages});
-        } catch(error) {
+        } catch (error) {
             console.error("error while fetching user's messages: ", error)
         }
     }

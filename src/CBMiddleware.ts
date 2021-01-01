@@ -3,7 +3,6 @@ import { validationResult } from 'express-validator';
 import { ResponseHelper } from './helpers/ResponseHelper';
 import { ErrorBuilder } from './helpers/ErrorBuilder';
 import { IncomingHttpHeaders } from 'http';
-import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { OnBoardingModel } from './onboarding/Model';
 
