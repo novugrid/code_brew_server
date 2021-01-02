@@ -7,6 +7,7 @@ import {
 })
 export class CBImage extends Model {
 
+    @Column
     public url!: string;
 
     @CreatedAt
@@ -20,6 +21,7 @@ export class CBImage extends Model {
     @DeletedAt
     @Column
     public deleted_at!: Date;
+
 }
 
 export interface CBImageParams {
