@@ -15,9 +15,9 @@ import { CBRules } from './CBRules';
 import { CBMessaageController } from './message/CBMessageController';
 import { CBFavourite } from './favourite/CBFavourite';
 import { CBFavouriteController } from './favourite/CBFavouriteController';
+import { Sequelize } from "sequelize-typescript";
 
 const Greeter = (name: string) => `Hello ${name}`;
-
 export {
     Greeter, 
     ErrorBuilder, 
@@ -42,5 +42,6 @@ export {
     MessageRequestParams,
     CBMessaageController,
     CBFavourite,
-    CBFavouriteController
+    CBFavouriteController,
+    Sequelize
 }

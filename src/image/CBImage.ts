@@ -1,14 +1,14 @@
 import {
-    Column, CreatedAt, Default, Model, Table, Unique, UpdatedAt, DeletedAt,
+    Column, CreatedAt, Model, Table, UpdatedAt, DeletedAt,
 } from "sequelize-typescript";
 
 @Table({
     tableName: "images"
 })
-export class CBImage extends Model<CBImage> {
+export class CBImage extends Model {
 
     @Column
-    url!: string
+    public url!: string;
 
     @CreatedAt
     @Column
@@ -21,6 +21,7 @@ export class CBImage extends Model<CBImage> {
     @DeletedAt
     @Column
     public deleted_at!: Date;
+
 }
 
 export interface CBImageParams {

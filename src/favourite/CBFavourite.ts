@@ -1,4 +1,4 @@
-import { Model, DataType, Default, Column, CreatedAt, UpdatedAt, DeletedAt, Table, ForeignKey, DefaultScope } from 'sequelize-typescript';
+import { Model, Column, CreatedAt, UpdatedAt, DeletedAt, Table, ForeignKey, DefaultScope } from 'sequelize-typescript';
 
 @DefaultScope({
     attributes: ['user_id', 'id']
@@ -9,7 +9,7 @@ import { Model, DataType, Default, Column, CreatedAt, UpdatedAt, DeletedAt, Tabl
 export class CBFavourite extends Model<CBFavourite> {
     
     @Column
-    user_id!: number
+    user_id!: number;
 
     @CreatedAt
     @Column

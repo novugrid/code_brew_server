@@ -7,18 +7,18 @@ import { CBImage } from '../image/CBImage';
 export class CBMessage extends Model {
 
     @Column(DataType.TEXT)
-    message!: string
+    message!: string;
 
     @Default("all")
     @Column
-    message_type!: string
+    message_type!: string;
 
     @Default("")
     @Column
-    message_title!: string
+    message_title!: string;
 
     @Column
-    user_id!: number
+    user_id!: number;
 
     @CreatedAt
     @Column
