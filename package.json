@@ -1,11 +1,12 @@
 {
   "name": "codebrew-server",
-  "version": "1.01.07",
+  "version": "1.01.12",
   "description": "this is a node projects that contains handy reusable tools for building other node projects",
   "main": "lib/index.js",
   "typescript": {
     "definition": "index.d.ts"
   },
+  "types": "lib/index.d.ts",
   "scripts": {
     "test": "jest --config jestconfig.json",
     "build": "tsc",
@@ -42,15 +43,21 @@
     "jsonwebtoken": "^8.5.1",
     "nodemailer": "^6.4.6",
     "reflect-metadata": "^0.1.13",
-    "sequelize": "5.18.4",
-    "sequelize-typescript": "1.0.0",
     "ts-jest": "^25.3.1",
     "mysql": "^2.17.1",
     "mysql2": "^1.7.0",
-    "typescript": "^3.8.3"
+    "dotenv": "^8.2.0",
+    "typescript": "^3.9.5",
+    "ts-node": "^8.10.2",
+    "sequelize": "5.18.4",
+    "sequelize-typescript": "1.0.0"
   },
   "dependencies": {
     "@types/bluebird": "^3.5.30",
     "@types/validator": "^13.0.0"
+  },
+  "peerDependencies": {
+    "sequelize": "5.18.4",
+    "sequelize-typescript": "1.0.0"
   }
 }

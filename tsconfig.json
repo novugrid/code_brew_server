@@ -1,21 +1,21 @@
 {
     "compilerOptions": {
-      "target": "es6",
+      "target": "ES2020",
       "module": "commonjs",
+      "esModuleInterop": true,
       "declaration": true,
       "outDir": "lib",
       "strict": true,
       "lib": ["es2017", "es7", "es6", "dom"],
-      "esModuleInterop": true,
       "experimentalDecorators": true,
       "emitDecoratorMetadata": true,
-      "types": ["node"],
+      "types": ["node"]
     },
-    "include": ["src",
-    ],
+    "include": ["src"],
     "exclude": [
       "node_modules", "**/__tests__/*",
       "src/**/*.spec.ts",
-      "lib"
+      "lib",
+      "example"
     ]
   }

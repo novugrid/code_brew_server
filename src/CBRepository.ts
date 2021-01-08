@@ -38,7 +38,7 @@ export class CBRepository<T extends Model<T>> {
                 offset: nOffset,
                 limit: pageSize,
                 order: order
-            })
+            });
             res.total = result.count
             res.total_pages = Math.ceil(result.count / pageSize)
             res.current_page = page
@@ -55,11 +55,11 @@ export class CBRepository<T extends Model<T>> {
 } 
 
 export class PaginationResponse {
-    total!: number
-    total_pages!: number
-    current_page!: number
-    previous_page?: number
-    next_page!: number
-    limit!: number
-    data: any
+    total!: number;
+    total_pages!: number;
+    current_page!: number;
+    previous_page?: number;
+    next_page!: number;
+    limit!: number;
+    data: any;
 }
