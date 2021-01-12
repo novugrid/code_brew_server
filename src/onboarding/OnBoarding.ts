@@ -1,11 +1,17 @@
-import { OnBoardingModel, OTPTokenModel } from './Model';
-import { OnBoardingResponse, LoginRequestParams, ResetPasswordRequestParams, ChangePasswordRequestParams, RegisterRequestParams } from './Interface';
+import {OnBoardingModel, OTPTokenModel} from './Model';
+import {
+    OnBoardingResponse,
+    LoginRequestParams,
+    ResetPasswordRequestParams,
+    ChangePasswordRequestParams,
+    RegisterRequestParams
+} from './Interface';
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
-import { Model } from 'sequelize-typescript';
-import { SocialLoginRequestParams } from '../onboarding/Interface';
-import { LoginType, CBUtility } from '../helpers/Utility';
-import { Emailer } from '../helpers/Emailer';
+import {Model} from 'sequelize-typescript';
+import {SocialLoginRequestParams} from './Interface';
+import {LoginType, CBUtility} from '..';
+import {Emailer} from '..';
 
 type NonAbstract<T> = { [P in keyof T]: T[P] }
 type Constructor<T> = (new () => T)
@@ -28,7 +34,7 @@ export class CBOnBoarding<T extends Model<T>> {
         var data: OnBoardingModel
         try {
             const record = await this.model.findOne({
-                where: { email: params.email }
+                where: {email: params.email}
             })
             const existingUser = record as OnBoardingModel
             if (existingUser && existingUser.login_type != params.login_type) {
@@ -60,8 +66,8 @@ export class CBOnBoarding<T extends Model<T>> {
         console.info("the user data passed is: ", data)
         try {
             const user = await this.model.findOne({
-                where: { email: data.email }
-            })
+                where: {email: data.email}
+            });
             if (user) {
                 response.message = "User with email already exist, please try alternative login"
                 return response;
@@ -80,8 +86,9 @@ export class CBOnBoarding<T extends Model<T>> {
     }
 
     /**
-     * 
+     *
      * @param params [LoginRequestParams]
+     * @param validateLoginType
      */
     public async login(params: LoginRequestParams, validateLoginType: boolean = true): Promise<OnBoardingResponse> {
         var response = new OnBoardingResponse();
@@ -105,9 +112,9 @@ export class CBOnBoarding<T extends Model<T>> {
                 response.message = "incorrect password, please try again later ";
                 return response;
             }
-            response.data = model
-            response.success = true
-            response.token = this.generateToken(model)
+            response.data = model;
+            response.success = true;
+            response.token = this.generateToken(model);
             response.message = "User logged in successfully"
 
         } catch (err) {
@@ -117,14 +124,19 @@ export class CBOnBoarding<T extends Model<T>> {
     }
 
     public generateToken(model: OnBoardingModel): string {
-        return jwt.sign({id: model.id, email: model.email, login_type: model.login_type}, this.jwtSecret);
+        return jwt.sign({
+            id: model.id,
+            email: model.email,
+            login_type: model.login_type,
+            uuid: model.uuid
+        }, this.jwtSecret);
     }
 
     public async initializePasswordReset<T extends Model<T>>(userEmail: string,
-        otpModel: NonAbstractTypeOfModel<T>, validateLoginType = true): Promise<OnBoardingResponse> {
+                                                             otpModel: NonAbstractTypeOfModel<T>, validateLoginType = true): Promise<OnBoardingResponse> {
         const token = CBUtility.generateToken(6);
         const user = await this.model.findOne({
-            where: { email: userEmail },
+            where: {email: userEmail},
         });
         var response = new OnBoardingResponse();
         if (user == null) {
@@ -138,7 +150,7 @@ export class CBOnBoarding<T extends Model<T>> {
         }
 
         try {
-            await otpModel.create({ user_id: user.id, otp: token });
+            await otpModel.create({user_id: user.id, otp: token});
             const mailResponse = await new Emailer().setFromTo(userEmail) // "dammyololade2010@gmail.com, oladosulek@gmail.com")
                 .setSubject("Password Reset Request Token")
                 .setHtml("<h2>You requested a password reset</h2>" +
@@ -155,9 +167,9 @@ export class CBOnBoarding<T extends Model<T>> {
     }
 
     public async resetPassword<U extends Model<U>>(requestBody: ResetPasswordRequestParams,
-        otpModel: NonAbstractTypeOfModel<U>): Promise<OnBoardingResponse> {
+                                                   otpModel: NonAbstractTypeOfModel<U>): Promise<OnBoardingResponse> {
         var user = await this.model.findOne({
-            where: { email: requestBody.email },
+            where: {email: requestBody.email},
         });
         var response = new OnBoardingResponse();
         if (user == null) {
@@ -183,7 +195,7 @@ export class CBOnBoarding<T extends Model<T>> {
 
                 if (requestBody.new_password === requestBody.confirm_password) {
                     let password = await bcrypt.hash(requestBody.new_password, this.saltRounds);
-                    await user.update({ "password": password });
+                    await user.update({"password": password});
                     response.success = true;
                     response.data = await user.reload()
                     response.message = "password reset successful"

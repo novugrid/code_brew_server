@@ -7,7 +7,8 @@ export class OnBoardingModel{
     login_type?: string;
     password?: string;
     user_name?: string;
-    mobile?: string
+    mobile?: string;
+    uuid?: string;
 }
 
 export class OTPTokenModel {
