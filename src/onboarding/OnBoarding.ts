@@ -34,8 +34,8 @@ export class CBOnBoarding<T extends Model<T>> {
         var data: OnBoardingModel
         try {
             const record = await this.model.findOne({
-                where: {email: params.email}
-            })
+                where: { email: params.email }
+            });
             const existingUser = record as OnBoardingModel
             if (existingUser && existingUser.login_type != params.login_type) {
                 //Todo we need to review this for other social login types
