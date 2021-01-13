@@ -54,6 +54,34 @@ export class CBRepository<T extends Model<T>> {
             throw err;
         }
     }
+
+    public async paginateOffset(requestPage: number = 1, requestCount: number = 20) {
+
+        let initialPage = 1;
+        let currentPage = 1;
+        if (requestPage) {
+            // initialPage = req
+        }
+
+    }
+
+    public static paginateData<M extends Model>(data: Array<M>, paginationParam: PaginationParams ): PaginationResponse<M> {
+
+        let result = {} as PaginationResponse<M>;
+        result.total = paginationParam.totalDataCount ?? data.length;
+        result.total_pages = Math.ceil(result.total / data.length);
+
+        result.current_page = paginationParam.currentPage;
+        result.limit = paginationParam.currentPageSize;
+        //res.previous_page = page == 1 ? 0 : (page - 1)
+        result.previous_page = paginationParam.currentPage > 1 ? (paginationParam.currentPage - 1) : 1;
+
+        result.next_page = paginationParam.currentPage == result.total_pages ? result.total_pages : (paginationParam.currentPage + 1);
+        result.data = data;
+        return result;
+
+    }
+
 } 
 
 export class PaginationResponse<T> {
@@ -63,5 +91,12 @@ export class PaginationResponse<T> {
     previous_page?: number;
     next_page!: number;
     limit!: number;
-    data!: T[];
+    data!: T[]; // Todo(Lekan) - I suggest we change this to results
+}
+
+export interface PaginationParams {
+    currentPage: number;
+    currentPageSize: number;
+    totalDataCount?: number;
+    offset?: number;
 }
