@@ -55,16 +55,6 @@ export class CBRepository<T extends Model<T>> {
         }
     }
 
-    public async paginateOffset(requestPage: number = 1, requestCount: number = 20) {
-
-        let initialPage = 1;
-        let currentPage = 1;
-        if (requestPage) {
-            // initialPage = req
-        }
-
-    }
-
     public static paginateData<M extends Model>(data: Array<M>, paginationParam: PaginationParams ): PaginationResponse<M> {
 
         let result = {} as PaginationResponse<M>;
