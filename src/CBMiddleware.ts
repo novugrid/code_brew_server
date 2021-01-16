@@ -45,7 +45,7 @@ export class CBMiddleware {
 
     private static async verifyToken(token: string) {
         return new Promise((resolve, reject) => {
-            jwt.verify(token, CBMiddleware.jwtSecret, async (err, decoded) => {
+            jwt.verify(token, process.env.JWT_SECRET_KEY ?? CBMiddleware.jwtSecret, async (err, decoded) => {
                 if (err) {
                     resolve(false);
                     return;

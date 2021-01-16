@@ -2,13 +2,13 @@ import * as nodemailer from "nodemailer";
 
 export class Emailer {
 
-    private from: string = "Novugrid <dharmochy@gmail.com>";
+    private from!: string;
     private to!: string;
     private subject!: string;
     private html!: string;
 
-    constructor(private userName: string = "dharmochy@gmail.com", 
-        private password: string = "#dharmochy098") { }
+    constructor(private userName?: string,
+        private password?: string) {}
 
     // constructor() {}
     public setFromTo(to: string, from?: string): Emailer {
@@ -46,13 +46,15 @@ export class Emailer {
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
-                user: this.userName,
-                pass: this.password,
+                user: this.userName ?? process.env.EMAIL,
+                pass: this.password ?? process.env.EMAIL_PASSWORD,
             },
         });
 
+        console.log("Email FROM THIS ", process.env.EMAIL_FROM);
+
         const mailOptions = {
-            from: this.from,
+            from: this.from ?? process.env.EMAIL_FROM,
             to: this.to,
             subject: this.subject,
             html: this.html, // "<h1>Welcome</h1><p>Thanks for signing up cheers...<p>",

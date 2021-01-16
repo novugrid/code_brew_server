@@ -34,7 +34,7 @@ export class CBOnBoarding<T extends Model<T>> {
         var data: OnBoardingModel
         try {
             const record = await this.model.findOne({
-                where: { email: params.email }
+                where: {email: params.email}
             });
             const existingUser = record as OnBoardingModel
             if (existingUser && existingUser.login_type != params.login_type) {
@@ -75,10 +75,10 @@ export class CBOnBoarding<T extends Model<T>> {
             if (data.password) {
                 data.password = await bcrypt.hash(data.password, this.saltRounds)
             }
-            response.data = await this.model.create(data)
-            response.token = this.generateToken(response.data)
-            response.message = "user registered successfully"
-            response.success = true
+            response.data = await this.model.create(data);
+            response.token = this.generateToken(response.data);
+            response.message = "user registered successfully";
+            response.success = true;
         } catch (err) {
             console.error("error registering new user ", err)
         }
@@ -89,15 +89,17 @@ export class CBOnBoarding<T extends Model<T>> {
      *
      * @param params [LoginRequestParams]
      * @param validateLoginType
+     * @param modelScope Specify scope to use for querying the model,
+     * this is useful when you dont want to expose a password field to the client
      */
-    public async login(params: LoginRequestParams, validateLoginType: boolean = true): Promise<OnBoardingResponse> {
+    public async login(params: LoginRequestParams, modelScope: string, validateLoginType: boolean = true): Promise<OnBoardingResponse> {
         var response = new OnBoardingResponse();
         try {
-            let record = await this.model.findOne({
+            let record = await this.model.scope(modelScope).findOne({
                 where: {
                     email: params.email
                 }
-            })
+            });
             if (!record) {
                 response.message = "User with email does not exist";
                 return response;
@@ -124,12 +126,14 @@ export class CBOnBoarding<T extends Model<T>> {
     }
 
     public generateToken(model: OnBoardingModel): string {
-        return jwt.sign({
+        const jwtData = {
             id: model.id,
             email: model.email,
             login_type: model.login_type,
             uuid: model.uuid
-        }, this.jwtSecret);
+        };
+        // @ts-ignore
+        return jwt.sign(jwtData, process.env.JWT_SECRET_KEY);
     }
 
     public async initializePasswordReset<T extends Model<T>>(userEmail: string,
@@ -161,7 +165,8 @@ export class CBOnBoarding<T extends Model<T>> {
             response.message = "an OTp has been sent to your mail"
             response.success = mailResponse
         } catch (e) {
-            console.error('error sending otp', e)
+            console.error('error sending otp', e);
+            throw e;
         }
         return response;
     }
@@ -214,10 +219,10 @@ export class CBOnBoarding<T extends Model<T>> {
 
     }
 
-    public async changePassword(requestBody: ChangePasswordRequestParams): Promise<OnBoardingResponse> {
+    public async changePassword(requestBody: ChangePasswordRequestParams, modelScope: string): Promise<OnBoardingResponse> {
         var response = new OnBoardingResponse();
         try {
-            const user = await this.model.findOne({
+            const user = await this.model.scope(modelScope).findOne({
                 where: {
                     id: Number(requestBody.id),
                     email: requestBody.email,
@@ -227,23 +232,28 @@ export class CBOnBoarding<T extends Model<T>> {
                 response.message = "user with email does not exist ";
                 return response
             }
-            let mirroedUser = user as OnBoardingModel
+            let mirroedUser = user as OnBoardingModel;
             if (mirroedUser.login_type != LoginType.EMAIL_N_PASSWORD) {
                 response.message = "you cannot change password for this account.";
                 return response
             }
             const correctPassword = await bcrypt.compare(requestBody.old_password, mirroedUser.password!);
             if (!correctPassword) {
-                response.message = "Wrond password, please try again later"
+                response.message = "Wrong password, please try again later"
                 return response;
+            }
+            const sameAsOldPassword = await bcrypt.compare(requestBody.new_password, mirroedUser.password!);
+            if(sameAsOldPassword) {
+                response.message = "The new password is the same as the old password, modify the new password and try again.";
+                return response
             }
             let newPassword = await bcrypt.hash(requestBody.new_password, this.saltRounds);
             user.update({
                 password: newPassword
             });
-            response.success = true
-            response.data = await user.reload()
-            response.message = "user's password changed successfully"
+            response.success = true;
+            response.data = user;
+            response.message = "user's password changed successfully";
             return response;
         } catch (e) {
             console.error("unable to change user's password", e)
