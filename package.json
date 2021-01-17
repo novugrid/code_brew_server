@@ -1,6 +1,6 @@
 {
   "name": "codebrew-server",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "this is a node projects that contains handy reusable tools for building other node projects",
   "main": "lib/index.js",
   "typescript": {
