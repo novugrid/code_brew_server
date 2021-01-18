@@ -4,7 +4,7 @@ import {
     LoginRequestParams,
     ResetPasswordRequestParams,
     ChangePasswordRequestParams,
-    RegisterRequestParams
+    RegisterRequestParams, TokenVerificationParam
 } from './Interface';
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
@@ -12,6 +12,8 @@ import {Model} from 'sequelize-typescript';
 import {SocialLoginRequestParams} from './Interface';
 import {LoginType, CBUtility} from '..';
 import {Emailer} from '..';
+import {OAuth2Client} from "google-auth-library";
+import VerifyAppleToken from 'verify-apple-id-token';
 
 type NonAbstract<T> = { [P in keyof T]: T[P] }
 type Constructor<T> = (new () => T)
@@ -21,7 +23,7 @@ export class CBOnBoarding<T extends Model<T>> {
 
     private readonly saltRounds = 12;
     private readonly jwtSecret = "0.rfyj3n9nzh";
-    model!: NonAbstractTypeOfModel<T>
+    model!: NonAbstractTypeOfModel<T>;
 
     constructor(model: NonAbstractTypeOfModel<T>) {
         this.model = model
@@ -31,34 +33,86 @@ export class CBOnBoarding<T extends Model<T>> {
     public async socialLogin(
         params: SocialLoginRequestParams): Promise<OnBoardingResponse> {
         var response = new OnBoardingResponse();
-        var data: OnBoardingModel
+        var data: OnBoardingModel;
         try {
             const record = await this.model.findOne({
                 where: {email: params.email}
             });
-            const existingUser = record as OnBoardingModel
+            const existingUser = record as OnBoardingModel;
             if (existingUser && existingUser.login_type != params.login_type) {
                 //Todo we need to review this for other social login types
-                response.message = "This record currently exist, kindly use Email and password to login"
+                response.message = "This record currently exist, kindly use Email and password to login";
                 return response;
             } else if (existingUser) {
-                data = existingUser
-                response.message = "user logged in successfully"
+                data = existingUser;
+                response.message = "user logged in successfully";
             } else {
                 data = await this.model.create({
                     email: params.email,
                     user_name: params.user_name,
                     login_type: params.login_type
                 });
-                response.message = "user registered successfully"
+                response.message = "user registered successfully";
+                response.isExistingUser = false;
             }
             response.success = true;
-            response.data = data
-            response.token = await this.generateToken(data)
+            response.data = data;
+            response.token = await this.generateToken(data);
         } catch (err) {
-            console.error("error performing socail login", err)
+            console.error("error performing social login", err);
+            throw err;
         }
         return response
+    }
+
+    public async verifyToken(params: TokenVerificationParam): Promise<boolean> {
+        try {
+            switch (params.login_type.toLowerCase()) {
+                case LoginType.APPLE:
+                    return await this.verifyAppleToken(params.client_id, params.token);
+                case LoginType.GOOGLE:
+                    return await this.verifyGoogleToken(params.client_id, params.token);
+                default:
+                    return false;
+            }
+        } catch(e) {
+            throw e;
+        }
+    }
+
+    public async verifyGoogleToken(clientId: string, token: string): Promise<boolean> {
+        try {
+            let verified = false;
+            const client = new OAuth2Client(clientId);
+            const ticket = await client.verifyIdToken({idToken: token, audience: clientId});
+            const payload = ticket.getPayload();
+            if(payload) {
+                const userid = payload['sub'];
+                verified = true;
+            }
+            return verified;
+        } catch (err) {
+            console.error("Error verifying google's token", err);
+            throw err;
+        }
+    }
+
+    public async verifyAppleToken(clientId: string, token: string): Promise<boolean> {
+        try {
+            let verified = false;
+            const jwtClaims = await VerifyAppleToken({
+                idToken: token,
+                clientId: clientId,
+            });
+            // todo validate the data inside the jwtclaims....
+            if(jwtClaims) {
+                verified = true;
+            }
+            return verified;
+        } catch (err) {
+            console.error("Error verifying apple's token", err);
+            throw err;
+        }
     }
 
     public async register(data: RegisterRequestParams): Promise<OnBoardingResponse> {
@@ -80,7 +134,8 @@ export class CBOnBoarding<T extends Model<T>> {
             response.message = "user registered successfully";
             response.success = true;
         } catch (err) {
-            console.error("error registering new user ", err)
+            console.error("error registering new user ", err);
+            throw err;
         }
         return response;
     }
@@ -120,7 +175,8 @@ export class CBOnBoarding<T extends Model<T>> {
             response.message = "User logged in successfully"
 
         } catch (err) {
-            console.error("error logging in user ", err)
+            console.error("error logging in user ", err);
+            throw err;
         }
         return response;
     }

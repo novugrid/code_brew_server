@@ -8,8 +8,9 @@ export enum LoginType {
     GOOGLE = "google",
     EMAIL_N_PASSWORD = "email_and_password",
     TWITTER = "twitter",
-    LINKEDLN = "linkedld",
-    GITHUB = "github"
+    LINKEDLN = "linkedln",
+    GITHUB = "github",
+    APPLE = "apple",
 }
 
 export class CBUtility {
