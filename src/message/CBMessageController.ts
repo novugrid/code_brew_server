@@ -17,7 +17,7 @@ const imageQuery = {
 export class CBMessaageController {
 
     public async getMessage(id: number): Promise<CBMessage | null> {
-        return CBMessage.findByPk(id);
+        return CBMessage.findByPk(id, {include: [imageQuery], order: [["created_at", "DESC"]]});
     }
 
     public async getMessages(date?: Date): Promise<CBMessage[]> {

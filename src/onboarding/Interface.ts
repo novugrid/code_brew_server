@@ -2,7 +2,16 @@
 export interface SocialLoginRequestParams {
     user_name: string,
     email: string,
-    login_type: string
+    login_type: string,
+    token: string,
+    client_id: string,
+    platform: string,
+}
+
+export interface TokenVerificationParam {
+    token: string,
+    client_id: string,
+    login_type: string,
 }
 
 export interface LoginRequestParams {
@@ -11,16 +20,18 @@ export interface LoginRequestParams {
 }
 
 export class OnBoardingResponse {
-    success: boolean
-    message: string
-    data: any
-    token: string
+    success: boolean;
+    message: string;
+    data: any;
+    token: string;
+    isExistingUser: boolean;
 
     public constructor() {
-        this.success = false
-        this.message = ""
-        this.data = null
-        this.token = ""
+        this.success = false;
+        this.message = "";
+        this.data = null;
+        this.token = "";
+        this.isExistingUser = true;
     }
 }
 

@@ -10,6 +10,12 @@ export class CBImage extends Model {
     @Column
     public url!: string;
 
+    @Column
+    public associate_table_id!: number;
+
+    @Column
+    public associate_table_name!: string;
+
     @CreatedAt
     @Column
     public created_at!: Date;

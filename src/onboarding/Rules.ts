@@ -5,6 +5,8 @@ export const onboardingRules = {
     forSocialLogin: [
         check("email").isEmail().withMessage("user's email must be a valid email"),
         check("user_name").not().isEmpty().withMessage("The user's name must not be empty"),
+        check("token").not().isEmpty().withMessage("The social login token is required"),
+        check("platform").not().isEmpty().withMessage("Specify the platform using this api e.g Android, IOS or web"),
         check("login_type")
             .notEmpty().withMessage("please specify a login type").bail().isIn([
                 LoginType.EMAIL_N_PASSWORD,
@@ -12,7 +14,8 @@ export const onboardingRules = {
                 LoginType.GITHUB,
                 LoginType.GOOGLE,
                 LoginType.LINKEDLN,
-                LoginType.TWITTER
+                LoginType.TWITTER,
+                LoginType.APPLE,
             ]).withMessage("login type must be a valid and acceptable login type")
     ],
 

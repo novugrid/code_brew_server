@@ -16,12 +16,14 @@ import { CBMessaageController } from './message/CBMessageController';
 import { CBFavourite } from './favourite/CBFavourite';
 import { CBFavouriteController } from './favourite/CBFavouriteController';
 import { Sequelize } from "sequelize-typescript";
+import { CBRequestHelper } from './helpers/CBRequestHelper';
 
 const Greeter = (name: string) => `Hello ${name}`;
 export {
     Greeter, 
     ErrorBuilder, 
-    ResponseHelper, 
+    ResponseHelper,
+    CBRequestHelper,
     LoginType, 
     onboardingRules,
     CBUtility,
