@@ -147,7 +147,7 @@ export class CBOnBoarding<T extends Model<T>> {
      * @param modelScope Specify scope to use for querying the model,
      * this is useful when you dont want to expose a password field to the client
      */
-    public async login(params: LoginRequestParams, modelScope: string, validateLoginType: boolean = true): Promise<OnBoardingResponse> {
+    public async login(params: LoginRequestParams, modelScope?: string, validateLoginType: boolean = true): Promise<OnBoardingResponse> {
         var response = new OnBoardingResponse();
         try {
             let record = await this.model.scope(modelScope).findOne({
@@ -189,7 +189,7 @@ export class CBOnBoarding<T extends Model<T>> {
             uuid: model.uuid
         };
         // @ts-ignore
-        return jwt.sign(jwtData, process.env.JWT_SECRET_KEY);
+        return jwt.sign(jwtData, process.env.JWT_SECRET_KEY, { algorithm: "HS256"});
     }
 
     public async initializePasswordReset<T extends Model<T>>(userEmail: string,

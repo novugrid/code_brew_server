@@ -16,6 +16,9 @@ export class CBImage extends Model {
     @Column
     public associate_table_name!: string;
 
+    @Column
+    public orderIndex!: number;
+
     @CreatedAt
     @Column
     public created_at!: Date;
